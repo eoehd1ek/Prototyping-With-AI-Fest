@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대학 축제 관리 서비스 프로토타입 (UI 최종 수정)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .nav-btn.active {
+            color: #3B82F6;
+        }
+
+        .gallery-item {
+            aspect-ratio: 1 / 1;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-800 flex justify-center items-center min-h-screen">
+
+    <!-- 스마트폰 프레임 -->
+    <div
+        class="w-full max-w-sm h-[800px] bg-white rounded-3xl shadow-2xl overflow-hidden border-8 border-black flex flex-col">
+
+        <!-- 메인 컨텐츠 영역 -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+
+            <!-- 부스 목록 뷰 -->
+            <div id="booth-list-view" class="hidden flex-col h-full">
+                <header class="p-4 flex justify-between items-center border-b sticky top-0 bg-white z-10">
+                    <h1 class="text-2xl font-bold">부스 목록</h1>
+                    <div class="flex items-center">
+                        <button id="search-btn-list" class="p-2"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                            </svg></button>
+                        <button class="notification-btn relative p-2"><svg xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                                class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                            </svg>
+                            <span
+                                class="notification-dot hidden absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+                        </button>
+                    </div>
+                </header>
+                <div id="list-search-bar" class="p-2 border-b hidden"><input id="list-search-input" type="text"
+                        placeholder="부스 이름으로 검색..."
+                        class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="p-2">
+                    <div class="flex space-x-2"><button class="booth-filter-btn active"
+                            data-filter="all">전체</button><button class="booth-filter-btn"
+                            data-filter="food">먹거리</button><button class="booth-filter-btn"
+                            data-filter="event">체험</button><button class="booth-filter-btn"
+                            data-filter="stage">공연</button></div>
+                </div>
+                <div id="booth-list-container" class="flex-1 overflow-y-auto p-2 space-y-2 no-scrollbar">
+                    <!-- JS로 동적 생성 -->
+                </div>
+            </div>
+
+            <!-- 홍보 피드 뷰 (전체 갤러리) -->
+            <div id="feed-view" class="flex flex-col h-full">
+                <header class="p-4 flex justify-between items-center border-b sticky top-0 bg-white z-10">
+                    <h1 class="text-2xl font-bold">홍보 피드</h1>
+                    <button class="notification-btn relative p-2"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                        </svg>
+                        <span
+                            class="notification-dot hidden absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                </header>
+                <div id="feed-gallery-container" class="flex-1 overflow-y-auto no-scrollbar grid grid-cols-3 gap-0">
+                    <!-- JS로 동적 생성 -->
+                </div>
+            </div>
+
+            <!-- 공지사항 뷰 -->
+            <div id="announcement-view" class="hidden flex-col h-full">
+                <header class="p-4 flex justify-between items-center border-b sticky top-0 bg-white z-10">
+                    <h1 class="text-2xl font-bold">공지사항</h1>
+                    <button class="notification-btn relative p-2"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                        </svg>
+                        <span
+                            class="notification-dot hidden absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                </header>
+                <div id="announcement-container" class="flex-1 overflow-y-auto p-4 space-y-3">
+                    <!-- JS로 동적 생성 -->
+                </div>
+            </div>
+
+            <!-- 부스 상세 뷰 (정보 + 갤러리) -->
+            <div id="booth-detail-view" class="hidden h-full flex-col">
+                <header class="p-4 flex items-center border-b sticky top-0 bg-white z-10">
+                    <button class="back-btn"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                        </svg></button>
+                    <h1 id="booth-detail-title" class="text-lg font-bold mx-auto"></h1>
+                    <div class="w-6"></div>
+                </header>
+                <div class="flex-1 overflow-y-auto no-scrollbar">
+                    <div id="booth-detail-header-image-container" class="w-full h-64 bg-gray-200">
+                        <img id="booth-detail-header-image" src="" class="w-full h-full object-cover">
+                    </div>
+                    <div id="booth-detail-info" class="p-4 space-y-4 border-b">
+                        <!-- JS로 부스 정보 동적 생성 -->
+                    </div>
+                    <div id="booth-detail-gallery-container" class="grid grid-cols-3 gap-0">
+                        <!-- JS로 부스 갤러리 동적 생성 -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 공지사항 상세 뷰 -->
+            <div id="announcement-detail-view" class="hidden h-full flex-col">
+                <header class="p-4 flex items-center border-b sticky top-0 bg-white z-10">
+                    <button class="back-btn"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                        </svg></button>
+                    <h1 id="announcement-detail-title" class="text-lg font-bold mx-auto">공지사항</h1>
+                    <div class="w-6"></div>
+                </header>
+                <div id="announcement-detail-content" class="flex-1 overflow-y-auto p-6">
+                    <!-- JS로 공지 상세 내용 동적 생성 -->
+                </div>
+            </div>
+        </main>
+
+        <!-- 하단 네비게이션 -->
+        <nav class="bg-white border-t flex justify-around">
+            <button class="nav-btn flex-1 p-2 flex flex-col items-center text-xs" data-view="announcement-view"><svg
+                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6 mb-1">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                </svg>축제 공지</button>
+            <button class="nav-btn flex-1 p-2 flex flex-col items-center text-xs active" data-view="feed-view"><svg
+                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6 mb-1">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+                </svg>홍보 피드</button>
+            <button class="nav-btn flex-1 p-2 flex flex-col items-center text-xs" data-view="booth-list-view"><svg
+                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6 mb-1">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" />
+                </svg>부스 목록</button>
+        </nav>
+
+        <!-- 알림 모달 -->
+        <div id="notification-modal"
+            class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div class="bg-white p-5 rounded-lg shadow-xl w-11/12 max-w-sm">
+                <h3 class="text-lg font-bold mb-4">새 알림</h3>
+                <div id="notification-list" class="space-y-2 max-h-60 overflow-y-auto">
+                    <!-- JS로 동적 생성 -->
+                </div>
+                <button id="notification-close-btn"
+                    class="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded-lg">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- 데이터 ---
+            const boothData = [
+                { id: 1, title: "컴공과 타코야끼", icon: "🐙", category: "food", location: "학생회관 앞 (A-3 구역)", description: "주문 즉시 만들어드리는 JMT 타코야끼! 개발자들이 한땀한땀 구웠습니다. 치즈맛, 와사비마요맛 강력 추천!", menu: `{"오리지널 타코야끼 (8알)": "4,000원", "치즈 타코야끼 (8알)": "5,000원"}`, posts: [{ id: 101, img: "https://placehold.co/600x600/3B82F6/FFFFFF?text=타코야끼+1" }, { id: 102, img: "https://placehold.co/600x600/60A5FA/FFFFFF?text=타코야끼+2" }, { id: 103, img: "https://placehold.co/600x600/93C5FD/FFFFFF?text=타코야끼+3" }] },
+                { id: 2, title: "디자인과 페이스페인팅", icon: "🎨", category: "event", location: "미대 건물 앞 (C-1 구역)", description: "축제의 추억을 얼굴에 남겨보세요! 전문 디자이너들이 그려주는 고퀄리티 페이스페인팅. 원하는 도안도 가능합니다. 참가비 무료!", menu: `{"캐릭터 페인팅": "무료", "레터링": "무료"}`, posts: [{ id: 201, img: "https://placehold.co/600x600/EC4899/FFFFFF?text=페인팅+1" }, { id: 202, img: "https://placehold.co/600x600/F472B6/FFFFFF?text=페인팅+2" }, { id: 203, img: "https://placehold.co/600x600/F9A8D4/FFFFFF?text=페인팅+3" }] },
+                { id: 3, title: "락밴드 동아리 버스킹", icon: "�", category: "stage", location: "야외 원형 무대 (B-5 구역)", description: "심장을 울리는 사운드! 락밴드 동아리 '크레센도'의 버스킹 공연이 진행됩니다. 많은 관심 부탁드립니다!", menu: `{"공연 시간": "18:00 ~ 19:00"}`, posts: [{ id: 301, img: "https://placehold.co/600x600/F59E0B/FFFFFF?text=공연+1" }] },
+                { id: 4, title: "경제학과 칵테일바", icon: "🍸", category: "food", location: "사회과학관 1층 (D-2 구역)", description: "무알콜 칵테일도 있어요! 축제 밤을 즐기는 가장 좋은 방법!", menu: `{"준벅": "5,000원", "피치크러쉬": "5,000원", "신데렐라(무알콜)": "4,000원"}`, posts: [{ id: 401, img: "https://placehold.co/600x600/8B5CF6/FFFFFF?text=칵테일+1" }, { id: 402, img: "https://placehold.co/600x600/A78BFA/FFFFFF?text=칵테일+2" }] }
+            ];
+            const announcementData = [
+                { id: 1, type: '긴급', title: '우천으로 인한 공연 장소 변경 안내', content: '금일 18시 진행 예정이던 락밴드 공연은 야외 원형 무대에서 실내 체육관으로 변경되었습니다. 착오 없으시길 바랍니다. 모두 즐거운 축제 되세요!', timestamp: '2025-07-06 13:00', read: false },
+                { id: 2, type: '안내', title: '분실물 센터 운영 안내', content: '분실물은 학생회관 1층 총학생회실에서 보관 및 인계하고 있습니다. 운영 시간은 오전 10시부터 오후 10시까지입니다.', timestamp: '2025-07-06 09:00', read: false },
+                { id: 3, type: '이벤트', title: '스탬프 투어 이벤트 경품 안내', content: '모든 스탬프를 모으신 분들께는 추첨을 통해 아이패드, 에어팟 등 푸짐한 상품을 드립니다! 추첨은 축제 마지막 날 오후 8시 대운동장 무대에서 진행됩니다.', timestamp: '2025-07-05 18:00', read: true }
+            ];
+
+            // --- DOM 요소 ---
+            const mainViews = document.querySelectorAll('main > div');
+            const navBtns = document.querySelectorAll('.nav-btn');
+            const backBtns = document.querySelectorAll('.back-btn');
+            const notificationBtns = document.querySelectorAll('.notification-btn');
+            const notificationModal = document.getElementById('notification-modal');
+            const notificationCloseBtn = document.getElementById('notification-close-btn');
+            const notificationList = document.getElementById('notification-list');
+            const notificationDots = document.querySelectorAll('.notification-dot');
+
+            const boothListContainer = document.getElementById('booth-list-container');
+            const filterBtns = document.querySelectorAll('.booth-filter-btn');
+            const searchBtnList = document.getElementById('search-btn-list');
+            const listSearchBar = document.getElementById('list-search-bar');
+            const listSearchInput = document.getElementById('list-search-input');
+
+            const feedGalleryContainer = document.getElementById('feed-gallery-container');
+            const boothDetailTitle = document.getElementById('booth-detail-title');
+            const boothDetailHeaderImage = document.getElementById('booth-detail-header-image');
+            const boothDetailInfo = document.getElementById('booth-detail-info');
+            const boothDetailGalleryContainer = document.getElementById('booth-detail-gallery-container');
+
+            const announcementContainer = document.getElementById('announcement-container');
+            const announcementDetailTitle = document.getElementById('announcement-detail-title');
+            const announcementDetailContent = document.getElementById('announcement-detail-content');
+
+            let viewHistory = ['feed-view'];
+
+            // --- 뷰 전환 및 히스토리 관리 ---
+            function switchView(viewId) {
+                mainViews.forEach(view => view.classList.add('hidden'));
+                const targetView = document.getElementById(viewId);
+                if (targetView) {
+                    targetView.classList.remove('hidden');
+                    targetView.classList.add('flex');
+                }
+
+                if (['booth-list-view', 'feed-view', 'announcement-view'].includes(viewId)) {
+                    navBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.view === viewId));
+                    viewHistory = [viewId];
+                } else {
+                    if (viewHistory[viewHistory.length - 1] !== viewId) {
+                        viewHistory.push(viewId);
+                    }
+                }
+            }
+
+            function goBack() {
+                if (viewHistory.length > 1) {
+                    viewHistory.pop();
+                    switchView(viewHistory[viewHistory.length - 1]);
+                }
+            }
+
+            // --- 렌더링 함수 ---
+            function createGalleryItem(post) {
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+                item.innerHTML = `<img src="${post.img}" class="w-full h-full object-cover block">`;
+                return item;
+            }
+
+            function showBoothDetail(boothId) {
+                const booth = boothData.find(b => b.id == boothId);
+                if (!booth) return;
+
+                boothDetailTitle.textContent = booth.title;
+
+                // Set header image
+                if (booth.posts && booth.posts.length > 0) {
+                    boothDetailHeaderImage.src = booth.posts[0].img;
+                    boothDetailHeaderImage.parentElement.classList.remove('hidden');
+                } else {
+                    boothDetailHeaderImage.parentElement.classList.add('hidden');
+                }
+
+                const menuItems = Object.entries(JSON.parse(booth.menu)).map(([key, value]) => `<div class="flex justify-between"><span>${key}</span><span class="font-semibold">${value}</span></div>`).join('');
+
+                boothDetailInfo.innerHTML = `
+                    <p class="text-gray-800">${booth.description}</p>
+                    <div><h3 class="font-bold text-md mb-2">📍 위치</h3><p class="text-sm">${booth.location}</p></div>
+                    <div><h3 class="font-bold text-md mb-2">📋 메뉴 및 활동</h3><div class="text-sm space-y-1">${menuItems}</div></div>
+                `;
+
+                boothDetailGalleryContainer.innerHTML = '';
+                booth.posts.forEach(post => boothDetailGalleryContainer.appendChild(createGalleryItem(post)));
+
+                switchView('booth-detail-view');
+            }
+
+            function showAnnouncementDetail(announcementId) {
+                const announcement = announcementData.find(a => a.id == announcementId);
+                if (!announcement) return;
+
+                announcement.read = true;
+
+                const typeColors = { '긴급': 'text-red-500', '안내': 'text-blue-500', '이벤트': 'text-green-500' };
+                announcementDetailContent.innerHTML = `
+                    <p class="font-bold text-lg ${typeColors[announcement.type] || 'text-gray-500'}">[${announcement.type}] ${announcement.title}</p>
+                    <p class="text-xs text-gray-400 mt-2 mb-6">${announcement.timestamp}</p>
+                    <p class="text-gray-700 leading-relaxed">${announcement.content}</p>
+                `;
+
+                switchView('announcement-detail-view');
+                updateNotificationDot();
+            }
+
+            function renderBoothList() {
+                boothListContainer.innerHTML = '';
+                boothData.forEach(booth => {
+                    const item = document.createElement('div');
+                    item.className = 'booth-item p-4 border rounded-lg flex items-center space-x-4 cursor-pointer hover:bg-gray-50 transition-colors';
+                    item.dataset.category = booth.category;
+                    item.dataset.title = booth.title.toLowerCase();
+                    item.innerHTML = `<div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-2xl">${booth.icon}</div><div class="flex-1"><p class="font-bold">${booth.title}</p><p class="text-sm text-gray-500">${booth.location}</p></div><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-gray-400"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>`;
+                    item.addEventListener('click', () => showBoothDetail(booth.id));
+                    boothListContainer.appendChild(item);
+                });
+            }
+
+            function renderAnnouncements() {
+                announcementContainer.innerHTML = '';
+                const typeColors = { '긴급': 'text-red-500', '안내': 'text-blue-500', '이벤트': 'text-green-500' };
+                announcementData.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'p-4 border rounded-lg cursor-pointer hover:bg-gray-50';
+                    div.innerHTML = `<p class="font-bold ${typeColors[item.type] || 'text-gray-500'}">[${item.type}]</p><h3 class="font-semibold mt-1">${item.title}</h3><p class="text-xs text-gray-400 mt-2 text-right">${item.timestamp}</p>`;
+                    div.addEventListener('click', () => showAnnouncementDetail(item.id));
+                    announcementContainer.appendChild(div);
+                });
+            }
+
+            function updateNotificationDot() {
+                const hasUnread = announcementData.some(item => !item.read);
+                notificationDots.forEach(dot => dot.classList.toggle('hidden', !hasUnread));
+            }
+
+            function renderNotifications() {
+                notificationList.innerHTML = '';
+                announcementData.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = `p-3 rounded-lg text-sm transition-colors ${item.read ? 'bg-gray-100 text-gray-500' : 'bg-orange-100 text-orange-800 cursor-pointer hover:bg-orange-200'}`;
+                    div.innerHTML = `<span class="font-bold">[${item.type}]</span> ${item.title}`;
+
+                    if (!item.read) {
+                        div.addEventListener('click', () => {
+                            notificationModal.classList.add('hidden');
+                            showAnnouncementDetail(item.id);
+                        });
+                    }
+                    notificationList.appendChild(div);
+                });
+                updateNotificationDot();
+            }
+
+            // --- 이벤트 리스너 ---
+            navBtns.forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.view)));
+            backBtns.forEach(btn => btn.addEventListener('click', goBack));
+
+            notificationBtns.forEach(btn => btn.addEventListener('click', () => {
+                renderNotifications();
+                notificationModal.classList.remove('hidden');
+            }));
+            notificationCloseBtn.addEventListener('click', () => notificationModal.classList.add('hidden'));
+
+            searchBtnList.addEventListener('click', () => listSearchBar.classList.toggle('hidden'));
+
+            listSearchInput.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                document.querySelectorAll('.booth-item').forEach(item => {
+                    item.style.display = item.dataset.title.includes(term) ? 'flex' : 'none';
+                });
+            });
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const filter = btn.dataset.filter;
+                    document.querySelectorAll('.booth-item').forEach(item => {
+                        item.style.display = (filter === 'all' || item.dataset.category === filter) ? 'flex' : 'none';
+                    });
+                });
+            });
+
+            // --- 초기화 ---
+            renderBoothList();
+            renderAnnouncements();
+            const allPosts = boothData.flatMap(booth => booth.posts.map(post => ({ ...post, booth })));
+            allPosts.sort(() => 0.5 - Math.random()); // Shuffle
+            allPosts.forEach(postInfo => {
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+                item.innerHTML = `<img src="${postInfo.img}" class="w-full h-full object-cover block cursor-pointer">`;
+                item.addEventListener('click', () => showBoothDetail(postInfo.booth.id));
+                feedGalleryContainer.appendChild(item);
+            });
+            updateNotificationDot();
+            switchView('feed-view');
+
+            // Style
+            const style = document.createElement('style');
+            style.textContent = `.booth-filter-btn { padding: 6px 12px; border: 1px solid #D1D5DB; border-radius: 9999px; font-size: 14px; color: #4B5563; transition: all 0.2s; } .booth-filter-btn.active { background-color: #3B82F6; color: white; border-color: #3B82F6; }`;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+
+</html>
